@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
@@ -14,7 +15,7 @@ class TaskController extends Controller
      */
     public function index(){
 
-        $user=Auth()->user()->load('tasks');
+        $user=Auth()->user();
         //dd($user);
     if(Auth::id()){
         $usertype=Auth()->user()->usertype;
@@ -51,12 +52,16 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $input= $request->task;
-        $user_id=Auth::user()->id;
-        //dd($request);
-        Task::create(['tasks' => $input, 'user_id'=>$user_id]);
-        // dd($input);
-        return redirect()->route('home.index');
+        $input = $request->input('task');
+        $user_id = Auth::user()->id;
+        $task = new Task();
+        $task->tasks = $input;
+        $task->user_id = $user_id;
+        $task->save();
+    
+    return redirect()->route('home.index');
+
+        
     }
 
     /**
@@ -70,7 +75,7 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Task $task,$id)
     {
         $task=Task::find($id);
         //dd($task);
@@ -93,18 +98,17 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Task $task, $id)
     {
-        Task::find($id)->delete();
-        //dd('$tasks');
-        return redirect()->route("home.index");
+       
+        $task = Task::find($id);
+        $task->delete();
+        return redirect()->back();
     }
-
-    public function editusertasks($id)
+    
+    public function editusertasks(Task $tasks)
     {
-        //dd($id);
-        $tasks=User::find($id)->load('tasks')->tasks()->get();
-       // dd($tasks);
-       return view('dashboard',compact('tasks'));
+        auth()->user()->load('tasks');
+        return view('dashboard',compact('tasks'));
     }
 }
