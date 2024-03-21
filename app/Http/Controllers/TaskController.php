@@ -106,9 +106,9 @@ class TaskController extends Controller
         return redirect()->back();
     }
     
-    public function editusertasks(Task $tasks)
+    public function editusertasks($id)
     {
-        auth()->user()->load('tasks');
+        $tasks=User::find($id)->load('tasks')->tasks()->get();
         return view('dashboard',compact('tasks'));
     }
 }
