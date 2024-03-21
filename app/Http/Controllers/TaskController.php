@@ -41,7 +41,7 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Task $task)
     {
         $task = Task::all();
         return view('dashboard', compact('task'));
@@ -78,16 +78,14 @@ class TaskController extends Controller
     public function edit(Task $task,$id)
     {
         $task=Task::find($id);
-        //dd($task);
-        return view('profile.dashboardedit', compact('task'));
+        return view('profile.dashboardedit',compact('task'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Task $task)
     {
-        $task=Task::find($id);
         $task->status= $request->status;
         $task->tasks = $request->tasks;
        // dd($task);
@@ -100,15 +98,14 @@ class TaskController extends Controller
      */
     public function destroy(Task $task, $id)
     {
-       
-        $task = Task::find($id);
-        $task->delete();
-        return redirect()->back();
+        $task=Task::find($id)->delete();
+        return redirect()->route("home.index", compact('task'));
     }
     
-    public function editusertasks($id)
+    public function editusertasks(User $user)
     {
-        $tasks=User::find($id)->load('tasks')->tasks()->get();
+        $tasks=$user->load('tasks')->tasks;
+        //$tasks=User::find($id)->load('tasks')->tasks;
         return view('dashboard',compact('tasks'));
     }
 }
