@@ -24,7 +24,7 @@
           <div class="card-body p-4">
             <h4 class="text-center my-3 pb-3">To Do App</h4>
 
-            <form method="POST" action="{{route('home.store')}}" class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
+            <form method="post" action="{{route('home.store')}}" class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
               <div class="col-12">
                 <div class="form-outline">
                     @csrf

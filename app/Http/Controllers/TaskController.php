@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
 {
@@ -50,7 +49,7 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request,Task $task)
     {
         $input = $request->input('task');
         $user_id = Auth::user()->id;
@@ -75,9 +74,8 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Task $task,$id)
+    public function edit(Task $task)
     {
-        $task=Task::find($id);
         return view('profile.dashboardedit',compact('task'));
     }
 
@@ -88,7 +86,6 @@ class TaskController extends Controller
     {
         $task->status= $request->status;
         $task->tasks = $request->tasks;
-       // dd($task);
         $task->save();
         return redirect()->route("home.index");
     }
@@ -96,16 +93,15 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task, $id)
+    public function destroy(Task $task)
     {
-        $task=Task::find($id)->delete();
+        $task->delete();
         return redirect()->route("home.index", compact('task'));
     }
     
     public function editusertasks(User $user)
     {
         $tasks=$user->load('tasks')->tasks;
-        //$tasks=User::find($id)->load('tasks')->tasks;
         return view('dashboard',compact('tasks'));
     }
 }
